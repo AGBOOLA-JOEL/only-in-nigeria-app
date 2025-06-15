@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import React from "react";
@@ -18,26 +17,23 @@ const Header = ({ onCreatePost }: HeaderProps) => {
           {/* Logo and Flag */}
           <div
             className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0"
-            style={{ minHeight: "2.4rem" }} // Control height to aid vertical centering
+            style={{ minHeight: "2.4rem" }}
           >
             <span className="flex items-center h-full">
-              {/* Nigerian flag image perfectly centered vertically */}
-              <span className="flex items-center justify-center h-[1.65rem] w-[2.5rem]">
+              {/* Nigerian flag image perfectly centered */}
+              <span className="flex items-center justify-center h-[1.7rem] w-[2.5rem] overflow-hidden bg-white rounded-sm border border-green-100 shadow-sm">
                 <img
                   src={NIGERIAN_FLAG_SRC}
                   alt="Nigerian flag"
-                  className="object-contain rounded-sm mr-2"
+                  className="object-contain max-h-full max-w-full rounded-sm"
                   style={{
                     display: "block",
-                    height: "1.65rem",
-                    width: "2.5rem",
-                    maxHeight: "100%",
-                    maxWidth: "100%",
-                    boxShadow: "0 0 2px rgba(0,0,0,0.06)",
+                    height: "100%",
+                    width: "100%",
                   }}
                 />
               </span>
-              <span className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600 whitespace-nowrap">
+              <span className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600 whitespace-nowrap ml-2">
                 Only in Nigeria
               </span>
             </span>
