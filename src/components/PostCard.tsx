@@ -14,7 +14,7 @@ interface PostCardProps {
   isLink?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
-  onOpenModal?: (post: Post) => void; // NEW, optional
+  onOpenModal?: (post: Post) => void;
 }
 
 const PostCard = ({
@@ -25,7 +25,7 @@ const PostCard = ({
   isLink = true,
   isFirst = false,
   isLast = false,
-  onOpenModal, // NEW
+  onOpenModal,
 }: PostCardProps) => {
   const formatTimeAgo = (timestampStr: string) => {
     const now = Date.now();
@@ -57,7 +57,6 @@ const PostCard = ({
     );
   };
 
-  // For name display, if present
   const renderPosterName = () => {
     if (post.name && post.name.trim() !== "") {
       return (
@@ -72,10 +71,8 @@ const PostCard = ({
     );
   };
 
-  // Prevent click event bubbling from buttons
   const handleRootClick = (e: React.MouseEvent) => {
     if (onOpenModal) {
-      // Ignore if a button or link or inside one
       const target = e.target as HTMLElement;
       if (
         target.closest("button") || 
@@ -92,12 +89,11 @@ const PostCard = ({
   return (
     <Card
       className={cn(
-        // basic layout/card classes
-        "flex justify-between items-stretch border border-gray-200 bg-white shadow-xs p-0 min-h-[110px] group transition-all duration-300 cursor-pointer select-none",
-        "!rounded-none mx-0", // On all mobile, default no radius, no margin
-        "sm:rounded-none sm:mx-0", // On tablets, still no
-        "md:mx-0 md:rounded-none", // md also full width
-        "lg:mx-auto", // Only on large screens center using parent's max-width
+        "flex justify-between items-stretch border border-gray-200 bg-white shadow-xs p-0 min-h-[90px] group transition-all duration-300 cursor-pointer select-none",
+        "!rounded-none mx-0",
+        "sm:rounded-none sm:mx-0",
+        "md:mx-0 md:rounded-none",
+        "lg:mx-auto",
         isFirst && "sm:rounded-t-xl",
         isLast && "sm:rounded-b-xl",
         "border-b-0",
@@ -110,21 +106,21 @@ const PostCard = ({
       onClick={handleRootClick}
     >
       {/* Main Content */}
-      <div className="flex-1 flex flex-col px-5 py-4 min-w-0">
-        <h3 className="text-base sm:text-lg font-bold text-gray-900 leading-tight mb-1 break-words line-clamp-2">
+      <div className="flex-1 flex flex-col px-5 py-2.5 min-w-0">
+        <h3 className="text-sm sm:text-base font-bold text-gray-900 leading-tight mb-0.5 break-words line-clamp-2">
           {post.title}
           {renderPosterName()}
         </h3>
-        <p className="text-sm sm:text-base text-gray-800 opacity-90 leading-relaxed break-words line-clamp-3 mb-2">
+        <p className="text-xs sm:text-sm text-gray-800 opacity-90 leading-relaxed break-words line-clamp-3 mb-1">
           {post.content}
         </p>
-        <div className="flex gap-3 items-center text-xs">
+        <div className="flex gap-2 items-center text-xs">
           <span className="px-2 py-0.5 rounded bg-gray-100 text-gray-400 font-semibold border border-gray-200">
             🇳🇬 Nigeria
           </span>
           <span className="text-gray-400/90">{formatTimeAgo(post.created_at)}</span>
         </div>
-        <div className="flex gap-4 mt-3 pt-2">
+        <div className="flex gap-3 mt-2 pt-1">
           <Button
             variant="ghost"
             size="sm"
@@ -146,13 +142,13 @@ const PostCard = ({
         </div>
         {/* Comments Section */}
         {showComments && post.comments && post.comments.length > 0 && (
-          <div className="mt-4 space-y-3">
+          <div className="mt-3 space-y-2">
             {post.comments.map((comment) => (
               <div
                 key={comment.id}
-                className="bg-gray-50 p-3 rounded-lg border-l-2 border-green-200"
+                className="bg-gray-50 p-2 rounded-lg border-l-2 border-green-200"
               >
-                <p className="text-sm text-gray-700 break-words">
+                <p className="text-xs sm:text-sm text-gray-700 break-words">
                   {comment.content}
                 </p>
                 <p className="text-xs text-gray-500 mt-2">
@@ -179,7 +175,7 @@ const PostCard = ({
           <ArrowUp className="w-5 h-5" />
         </Button>
         <span
-          className={`block text-sm font-semibold text-center min-w-[24px] px-2 py-0.5 rounded ${
+          className={`block text-xs font-semibold text-center min-w-[20px] px-1.5 py-0.5 rounded ${
             post.votes > 0 ? 'text-green-700' : 'text-gray-400'
           }`}
         >
