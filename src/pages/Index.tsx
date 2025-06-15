@@ -97,7 +97,16 @@ const Index = () => {
               </div>
             </div>
 
-            <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
+            {/* Filter row: SortTabs + Post Story (right) */}
+            <div className="flex items-center justify-between mb-4 sm:mb-6">
+              <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
+              <Button
+                onClick={() => setIsCreateModalOpen(true)}
+                className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-2 whitespace-nowrap ml-3"
+              >
+                <span className="hidden sm:inline">Post Story</span>
+              </Button>
+            </div>
 
             {/* Posts Container */}
             <div>

@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import React from "react";
@@ -30,17 +29,38 @@ const Header = ({ onCreatePost }: HeaderProps) => {
               </span>
             </span>
           </div>
-
-          {/* Create Post Button */}
-          {onCreatePost && (
+          
+          {/* Twitter Icon Button */}
+          <a
+            href="https://x.com/Juw_elle"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Connect with us on Twitter"
+            className="ml-2"
+          >
             <Button 
-              onClick={onCreatePost} 
-              className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-2 whitespace-nowrap"
+              variant="ghost"
+              className="p-2 rounded-full hover:bg-green-50 text-green-600"
+              type="button"
             >
-              <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-              <span className="hidden sm:inline">Post Story</span>
+              {/* Only allowed icon */}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={22}
+                height={22}
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="lucide lucide-twitter"
+              >
+                <path d="M22 4.01c-.75.35-1.54.59-2.36.7A4.1 4.1 0 0 0 21.5 2.1a8.18 8.18 0 0 1-2.63 1A4.09 4.09 0 0 0 12 7.57a11.6 11.6 0 0 1-8.4-4.26A4.11 4.11 0 0 0 3.1 8a4.07 4.07 0 0 1-1.85-.51v.05A4.1 4.1 0 0 0 4.08 11a4.07 4.07 0 0 1-1.84.07 4.1 4.1 0 0 0 3.81 2.83A8.23 8.23 0 0 1 2 17.51a11.61 11.61 0 0 0 6.29 1.84c7.54 0 11.67-6.25 11.67-11.67 0-.18 0-.37-.01-.55A8.36 8.36 0 0 0 22 4.01Z" />
+              </svg>
+              <span className="sr-only">Twitter</span>
             </Button>
-          )}
+          </a>
         </div>
       </div>
     </header>
@@ -48,4 +68,3 @@ const Header = ({ onCreatePost }: HeaderProps) => {
 };
 
 export default Header;
-
