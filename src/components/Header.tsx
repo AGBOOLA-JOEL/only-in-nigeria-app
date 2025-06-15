@@ -13,7 +13,7 @@ const NIGERIAN_FLAG_SRC =
 const Header = ({ onCreatePost }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-50 bg-white/60 dark:bg-gray-900/50 backdrop-blur-sm border-b border-green-100 shadow-sm transition-all duration-200">
-      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:px-6 py-3 sm:py-4">
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 lg:pl-20 lg:pr-6 py-3 sm:py-4">
         <div className="flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo and Flag */}
           <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
@@ -48,3 +48,4 @@ const Header = ({ onCreatePost }: HeaderProps) => {
 };
 
 export default Header;
+
