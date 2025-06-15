@@ -73,14 +73,30 @@ const Index = () => {
       
       <main className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
         {/* Welcome Section */}
-        <div className="mb-6 sm:mb-8 text-center sm:text-left">
-          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">
-            Welcome to Only in Nigeria! 🇳🇬
+        <div className="mb-6 sm:mb-8 p-4 sm:p-6 border border-green-200 bg-green-50/30 rounded-lg shadow-sm">
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
+            Share your Nigerian story 🇳🇬
           </h2>
-          <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed max-w-3xl">
-            Share your uniquely Nigerian experiences, stories, and observations. No authentication needed - 
-            just dive in and start sharing your amazing Nigeria stories!
-          </p>
+          <div className="space-y-3 text-gray-700 text-sm sm:text-base leading-relaxed">
+            <p>
+              We love Nigeria ❤️
+            </p>
+            <p>
+              But we also experience many crazy and frustrating things we've never experienced anywhere else in the world. Experiences that just make you pull your hair out, or laugh in how completely absurd service interactions can be in Nigeria, with businesses, government services, or even just restaurants.
+            </p>
+            <p>
+              This board is a way to collect our stories to show there's a distinct pattern of unique interactions in this country, which is unlike the rest of the world.
+            </p>
+            <p>
+              Hopefully by collecting these stories, we can all learn and appreciate the uniqueness of Nigeria.
+            </p>
+            <p className="italic text-gray-600 pt-2">
+              "A dead thing can go with the stream, but only a living thing can go against it."
+            </p>
+            <p className="font-bold uppercase text-green-700 pt-2">
+              Posts are fully anonymous. Your email and username are not shared, ever.
+            </p>
+          </div>
         </div>
 
         <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
