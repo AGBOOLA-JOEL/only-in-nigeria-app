@@ -73,10 +73,15 @@ const PostCard = ({
   return (
     <Card
       className={cn(
+        // basic layout/card classes
         "flex justify-between items-stretch border border-gray-200 bg-white shadow-xs p-0 min-h-[110px] group transition-all duration-300",
-        !isFirst && !isLast && "rounded-none",
-        isFirst && "rounded-t-xl",
-        isLast && "rounded-b-xl",
+        // Responsive border radius and margin
+        "!rounded-none mx-0", // On all mobile, default no radius, no margin
+        "sm:rounded-none sm:mx-0", // On tablets, still no
+        "md:mx-0 md:rounded-none", // md also full width
+        "lg:mx-auto", // Only on large screens center using parent's max-width
+        isFirst && "sm:rounded-t-xl",
+        isLast && "sm:rounded-b-xl",
         "border-b-0",
         isLast && "border-b"
       )}

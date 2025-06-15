@@ -71,8 +71,9 @@ const Index = () => {
       <main className="flex-1 flex flex-col items-start w-full">
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:pl-20 lg:pr-6">
           <div className="w-full lg:max-w-2xl">
-            {/* Welcome Section */}
-            <div className="mb-6 sm:mb-8 p-5 sm:p-8 border border-green-200 bg-green-50/80 rounded-xl shadow-md mt-3">
+
+            {/* Welcome Section with margin top added */}
+            <div className="mb-6 sm:mb-8 p-5 sm:p-8 border border-green-200 bg-green-50/80 rounded-xl shadow-md mt-3 sm:mt-6">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
                 Share your Nigerian story 🇳🇬
               </h2>
@@ -98,25 +99,49 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Filter row: SortTabs + (space) + SearchBox + Post Button aligned right */}
+            {/* Filter row: Responsive */}
             <div className="flex items-center gap-2 mb-6">
-              <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
-              
-              <div className="flex-1" />
-              
-              <SearchBox
-                value={searchTerm}
-                onChange={setSearchTerm}
-              />
-
-              <Button
-                onClick={() => setIsCreateModalOpen(true)}
-                className="flex items-center px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm shadow transition-all ml-2"
-                type="button"
-              >
-                <Plus size={18} className="mr-2" />
-                Post your Nigeria story
-              </Button>
+              {/* Desktop/Tablet: Show all sort tabs, search & button */}
+              <div className="hidden sm:flex items-center flex-1 gap-2">
+                <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
+                <div className="flex-1" />
+                <SearchBox value={searchTerm} onChange={setSearchTerm} />
+                <Button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="flex items-center px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm shadow transition-all ml-2"
+                  type="button"
+                >
+                  <Plus size={18} className="mr-2" />
+                  Post your Nigeria story
+                </Button>
+              </div>
+              {/* Mobile: Show only Top sort tab and post btn */}
+              <div className="flex sm:hidden w-full gap-2 items-center">
+                <div className="flex-shrink-0">
+                  <Button
+                    variant={activeSort === 'top' ? "secondary" : "outline"}
+                    size="sm"
+                    className={`font-medium px-4 py-2 flex items-center rounded-md ${
+                      activeSort === 'top'
+                        ? "bg-gray-100 text-gray-800"
+                        : "bg-white text-gray-600 border border-gray-300"
+                    }`}
+                    onClick={() => setActiveSort('top')}
+                    type="button"
+                  >
+                    Top
+                  </Button>
+                </div>
+                <div className="flex-1" />
+                <Button
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="flex items-center px-3 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-xs shadow transition-all ml-2"
+                  type="button"
+                >
+                  <Plus size={16} className="mr-2" />
+                  Post your story
+                </Button>
+              </div>
             </div>
 
             {/* Posts Container */}
