@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import PostCard from '@/components/PostCard';
@@ -65,12 +64,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50/20 to-gray-50">
-      <Header 
-        onCreatePost={() => setIsCreateModalOpen(true)}
-        searchTerm={searchTerm}
-        onSearchChange={setSearchTerm}
-      />
-      
+      <Header onCreatePost={() => setIsCreateModalOpen(true)} />
       <main className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
         {/* Welcome Section */}
         <div className="mb-6 sm:mb-8 p-4 sm:p-6 border border-green-200 bg-green-50/30 rounded-lg shadow-sm">
