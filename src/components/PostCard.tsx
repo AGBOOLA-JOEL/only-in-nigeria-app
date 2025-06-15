@@ -1,7 +1,6 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ChevronUp, ChevronDown, MessageCircle, Share2 } from "lucide-react";
+import { ArrowUp, ArrowDown, MessageCircle, Share2 } from "lucide-react";
 import { Post } from "@/types/post";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -58,12 +57,25 @@ const PostCard = ({ post, onVote, onComment, showComments = false, isLink = true
               post.userVote === 'up' ? 'text-green-600 bg-green-50' : 'text-gray-400 hover:text-green-600'
             }`}
           >
-            <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5" />
+            <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
-          <span className={`text-xs sm:text-sm font-semibold px-1 py-0.5 rounded min-w-[24px] text-center ${
-            post.votes > 0 ? 'text-green-600' : post.votes < 0 ? 'text-red-600' : 'text-gray-600'
-          }`}>
-            {post.votes}
+          <span className="flex flex-col items-center">
+            {/* Upvote count */}
+            <span
+              className={`text-xs font-semibold px-1 py-0.5 rounded min-w-[26px] text-center ${
+                post.votes > 0 ? 'text-green-600' : 'text-gray-500'
+              }`}
+            >
+              ▲ {post.votes}
+            </span>
+            {/* Downvote count */}
+            <span
+              className={`text-xs font-semibold px-1 py-0.5 rounded min-w-[26px] text-center ${
+                post.downvotes > 0 ? 'text-red-600' : 'text-gray-500'
+              }`}
+            >
+              ▼ {post.downvotes}
+            </span>
           </span>
           <Button
             variant="ghost"
@@ -73,7 +85,7 @@ const PostCard = ({ post, onVote, onComment, showComments = false, isLink = true
               post.userVote === 'down' ? 'text-red-600 bg-red-50' : 'text-gray-400 hover:text-red-600'
             }`}
           >
-            <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5" />
+            <ArrowDown className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </div>
         

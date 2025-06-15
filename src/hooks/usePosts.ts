@@ -1,4 +1,3 @@
-
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Post, Comment } from '@/types/post';
@@ -55,11 +54,12 @@ export const usePosts = () => {
                 return acc;
             }, {});
 
-            // Combine posts with their comments and vote status
+            // Combine posts with their comments and vote status, including downvotes
             const posts: Post[] = postsData.map(p => {
                 const postComments = commentsByPostId[p.id] || [];
                 return {
                     ...p,
+                    downvotes: typeof p.downvotes === "number" ? p.downvotes : 0,
                     comments: postComments.sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
                     commentCount: postComments.length,
                     userVote: votedPosts[p.id] || null,
@@ -73,7 +73,8 @@ export const usePosts = () => {
 
     const addPostMutation = useMutation({
         mutationFn: async ({ title, content }: { title: string; content: string }) => {
-            const { data, error } = await supabase.from('posts').insert({ title, content, votes: 1 }).select().single();
+            // Insert into posts with upvote = 1, downvotes = 0
+            const { data, error } = await supabase.from('posts').insert({ title, content, votes: 1, downvotes: 0 }).select().single();
             if (error) throw new Error(error.message);
             setVotedPost(data.id, 'up'); // User who creates a post auto-upvotes it.
             return data;
@@ -93,28 +94,70 @@ export const usePosts = () => {
         },
     });
 
+    // NEW VOTE LOGIC: handle upvote/downvote fields separately
     const voteOnPostMutation = useMutation({
+        // If user toggles their current vote, revert it. If switching, adjust accordingly.
         mutationFn: async ({ postId, voteType }: { postId: string; voteType: 'up' | 'down' }) => {
             const currentVote = getVotedPosts()[postId];
-            let voteValue = 0;
+            let upvoteChange = 0;
+            let downvoteChange = 0;
             let nextVoteState: 'up' | 'down' | null = voteType;
 
-            if (currentVote === voteType) {
-                voteValue = voteType === 'up' ? -1 : 1;
-                nextVoteState = null;
-            } else if (currentVote) {
-                voteValue = voteType === 'up' ? 2 : -2;
+            if (!currentVote) {
+              // New vote (never voted)
+              if (voteType === 'up') upvoteChange = 1;
+              else downvoteChange = 1;
+            } else if (currentVote === voteType) {
+              // Remove vote (toggle same)
+              if (voteType === 'up') upvoteChange = -1;
+              else downvoteChange = -1;
+              nextVoteState = null;
             } else {
-                voteValue = voteType === 'up' ? 1 : -1;
+              // Switching vote
+              if (voteType === 'up') {
+                upvoteChange = 1;
+                downvoteChange = -1;
+              } else {
+                upvoteChange = -1;
+                downvoteChange = 1;
+              }
             }
-            
-            const { error } = await supabase.rpc('update_post_vote', {
-                post_id_to_update: postId,
-                vote_value: voteValue,
-            });
 
-            if (error) throw new Error(error.message);
-            
+            // Update both upvote and downvote fields
+            const updates: Record<string, any> = {};
+            if (upvoteChange !== 0) updates.votes = supabase.rpc('update_post_vote', {
+                post_id_to_update: postId,
+                vote_value: upvoteChange,
+            });
+            if (downvoteChange !== 0) updates.downvotes = supabase
+                .from('posts')
+                .update({ downvotes: upvoteChange !== 0 ? null : supabase.literal(`downvotes + ${downvoteChange}`) })
+                .eq('id', postId);
+
+            // Use a PG function for upvotes (existing) and direct update for downvotes for compatibility
+            if (upvoteChange !== 0) {
+              const { error } = await supabase.rpc('update_post_vote', {
+                post_id_to_update: postId,
+                vote_value: upvoteChange,
+              });
+              if (error) throw new Error(error.message);
+            }
+            if (downvoteChange !== 0) {
+              // Use a single "update ... set downvotes = downvotes + X" query.
+              const { error } = await supabase
+                .from('posts')
+                .update({ downvotes: undefined })
+                .eq('id', postId)
+                .select()
+                .single();
+              // Patch: since supabase-js does not have a way to increment in one call, instead use RPC. But workaround below using direct update:
+              const { error: updateError } = await supabase.rpc('increment_downvotes', {
+                post_id_input: postId,
+                change: downvoteChange,
+              });
+              if (updateError) throw new Error(updateError.message);
+            }
+
             setVotedPost(postId, nextVoteState);
         },
         onSuccess: () => {
@@ -122,17 +165,26 @@ export const usePosts = () => {
         },
     });
 
+    // Sorting: "top" uses upvotes - downvotes, trending uses a score as before, with net votes
     const sortPosts = (postsToSort: Post[], sortType: 'new' | 'top' | 'trending') => {
         if (!postsToSort) return [];
         switch (sortType) {
           case 'new':
             return [...postsToSort].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
           case 'top':
-            return [...postsToSort].sort((a, b) => b.votes - a.votes);
+            // Sort by NET votes, then upvotes, then downvotes
+            return [...postsToSort].sort(
+              (a, b) =>
+                (b.votes - b.downvotes) - (a.votes - a.downvotes) ||
+                b.votes - a.votes ||
+                a.downvotes - b.downvotes
+            );
           case 'trending':
+            // Trending = net votes / hours since post
+            const now = Date.now();
             return [...postsToSort].sort((a, b) => {
-              const aScore = a.votes / (Date.now() - new Date(a.created_at).getTime() + 1);
-              const bScore = b.votes / (Date.now() - new Date(b.created_at).getTime() + 1);
+              const aScore = ((a.votes - a.downvotes)) / ((now - new Date(a.created_at).getTime()) / 3600000 + 1);
+              const bScore = ((b.votes - b.downvotes)) / ((now - new Date(b.created_at).getTime()) / 3600000 + 1);
               return bScore - aScore;
             });
           default:

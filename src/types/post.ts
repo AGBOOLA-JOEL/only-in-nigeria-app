@@ -1,4 +1,3 @@
-
 export interface Comment {
   id: string;
   content: string;
@@ -10,7 +9,8 @@ export interface Post {
   id: string;
   title: string;
   content: string;
-  votes: number;
+  votes: number; // upvotes
+  downvotes: number; // ADDED: downvotes
   userVote?: 'up' | 'down' | null;
   commentCount: number;
   comments: Comment[];
