@@ -1,17 +1,19 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronUp, ChevronDown, MessageCircle, Share2 } from "lucide-react";
 import { Post } from "@/types/post";
+import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 interface PostCardProps {
   post: Post;
   onVote: (postId: string, voteType: 'up' | 'down') => void;
   onComment: (postId: string) => void;
   showComments?: boolean;
+  isLink?: boolean;
 }
 
-const PostCard = ({ post, onVote, onComment, showComments = false }: PostCardProps) => {
+const PostCard = ({ post, onVote, onComment, showComments = false, isLink = true }: PostCardProps) => {
   const formatTimeAgo = (timestamp: number) => {
     const now = Date.now();
     const diff = now - timestamp;
@@ -26,6 +28,19 @@ const PostCard = ({ post, onVote, onComment, showComments = false }: PostCardPro
       const days = Math.floor(hours / 24);
       return `${days}d ago`;
     }
+  };
+
+  const handleShare = () => {
+    const postUrl = `${window.location.origin}/post/${post.id}`;
+    navigator.clipboard.writeText(postUrl).then(
+      () => {
+        toast.success("Link copied to clipboard!");
+      },
+      (err) => {
+        console.error("Could not copy text: ", err);
+        toast.error("Failed to copy link.");
+      }
+    );
   };
 
   return (
@@ -63,7 +78,13 @@ const PostCard = ({ post, onVote, onComment, showComments = false }: PostCardPro
         {/* Content Section */}
         <div className="flex-1 min-w-0">
           <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 leading-tight break-words">
-            {post.title}
+            {isLink ? (
+              <Link to={`/post/${post.id}`} className="hover:underline">
+                {post.title}
+              </Link>
+            ) : (
+              post.title
+            )}
           </h3>
           <p className="text-sm sm:text-base text-gray-700 mb-3 leading-relaxed break-words line-clamp-3">
             {post.content}
@@ -92,6 +113,7 @@ const PostCard = ({ post, onVote, onComment, showComments = false }: PostCardPro
             <Button 
               variant="ghost" 
               size="sm" 
+              onClick={handleShare}
               className="flex items-center gap-1 sm:gap-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors text-xs sm:text-sm px-2 sm:px-3 py-1"
             >
               <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />

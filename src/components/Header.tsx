@@ -1,13 +1,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, Plus, Menu } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 import { useState } from "react";
 
 interface HeaderProps {
-  onCreatePost: () => void;
-  searchTerm: string;
-  onSearchChange: (value: string) => void;
+  onCreatePost?: () => void;
+  searchTerm?: string;
+  onSearchChange?: (value: string) => void;
 }
 
 const Header = ({ onCreatePost, searchTerm, onSearchChange }: HeaderProps) => {
@@ -24,45 +24,51 @@ const Header = ({ onCreatePost, searchTerm, onSearchChange }: HeaderProps) => {
             </h1>
             
             {/* Desktop Search */}
-            <div className="relative hidden md:flex flex-1 max-w-md lg:max-w-lg">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Search Nigeria stories..."
-                value={searchTerm}
-                onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-10 w-full bg-gray-50/50 border-gray-200 focus:border-green-300 focus:ring-green-200"
-              />
-            </div>
+            {onSearchChange && (
+              <div className="relative hidden md:flex flex-1 max-w-md lg:max-w-lg">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search Nigeria stories..."
+                  value={searchTerm || ''}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  className="pl-10 w-full bg-gray-50/50 border-gray-200 focus:border-green-300 focus:ring-green-200"
+                />
+              </div>
+            )}
 
             {/* Mobile Search Toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="md:hidden p-2"
-            >
-              <Search className="w-4 h-4" />
-            </Button>
+            {onSearchChange && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+                className="md:hidden p-2"
+              >
+                <Search className="w-4 h-4" />
+              </Button>
+            )}
           </div>
 
           {/* Create Post Button */}
-          <Button 
-            onClick={onCreatePost} 
-            className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-2 whitespace-nowrap"
-          >
-            <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-            <span className="hidden sm:inline">Post Story</span>
-          </Button>
+          {onCreatePost && (
+            <Button 
+              onClick={onCreatePost} 
+              className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-2 whitespace-nowrap"
+            >
+              <Plus className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+              <span className="hidden sm:inline">Post Story</span>
+            </Button>
+          )}
         </div>
 
         {/* Mobile Search */}
-        {isSearchOpen && (
+        {isSearchOpen && onSearchChange && (
           <div className="mt-3 md:hidden animate-fade-in">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input
                 placeholder="Search Nigeria stories..."
-                value={searchTerm}
+                value={searchTerm || ''}
                 onChange={(e) => onSearchChange(e.target.value)}
                 className="pl-10 w-full bg-gray-50/50 border-gray-200 focus:border-green-300 focus:ring-green-200"
                 autoFocus
