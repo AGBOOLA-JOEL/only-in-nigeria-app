@@ -1,9 +1,9 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, MessageCircle, Share2 } from "lucide-react";
 import { Post } from "@/types/post";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 interface PostCardProps {
@@ -14,6 +14,7 @@ interface PostCardProps {
   isLink?: boolean;
   isFirst?: boolean;
   isLast?: boolean;
+  onOpenModal?: (post: Post) => void; // NEW, optional
 }
 
 const PostCard = ({
@@ -24,6 +25,7 @@ const PostCard = ({
   isLink = true,
   isFirst = false,
   isLast = false,
+  onOpenModal, // NEW
 }: PostCardProps) => {
   const formatTimeAgo = (timestampStr: string) => {
     const now = Date.now();
@@ -70,12 +72,28 @@ const PostCard = ({
     );
   };
 
+  // Prevent click event bubbling from buttons
+  const handleRootClick = (e: React.MouseEvent) => {
+    if (onOpenModal) {
+      // Ignore if a button or link or inside one
+      const target = e.target as HTMLElement;
+      if (
+        target.closest("button") || 
+        target.tagName === "BUTTON" ||
+        target.closest("a") ||
+        target.tagName === "A"
+      ) {
+        return;
+      }
+      onOpenModal(post);
+    }
+  };
+
   return (
     <Card
       className={cn(
         // basic layout/card classes
-        "flex justify-between items-stretch border border-gray-200 bg-white shadow-xs p-0 min-h-[110px] group transition-all duration-300",
-        // Responsive border radius and margin
+        "flex justify-between items-stretch border border-gray-200 bg-white shadow-xs p-0 min-h-[110px] group transition-all duration-300 cursor-pointer select-none",
         "!rounded-none mx-0", // On all mobile, default no radius, no margin
         "sm:rounded-none sm:mx-0", // On tablets, still no
         "md:mx-0 md:rounded-none", // md also full width
@@ -89,17 +107,12 @@ const PostCard = ({
         marginBottom: 0,
         borderBottomWidth: isLast ? undefined : 0,
       }}
+      onClick={handleRootClick}
     >
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-5 py-4 min-w-0">
         <h3 className="text-base sm:text-lg font-bold text-gray-900 leading-tight mb-1 break-words line-clamp-2">
-          {isLink ? (
-            <Link to={`/post/${post.id}`} className="hover:underline">
-              {post.title}
-            </Link>
-          ) : (
-            post.title
-          )}
+          {post.title}
           {renderPosterName()}
         </h3>
         <p className="text-sm sm:text-base text-gray-800 opacity-90 leading-relaxed break-words line-clamp-3 mb-2">

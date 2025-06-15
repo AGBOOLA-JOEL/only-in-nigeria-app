@@ -9,12 +9,14 @@ import { usePosts } from '@/hooks/usePosts';
 import { Post } from '@/types/post';
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import PostModal from '@/components/PostModal';
 
 const Index = () => {
   const { posts, isLoading, addPost, voteOnPost, addComment, sortPosts } = usePosts();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
   const [selectedPost, setSelectedPost] = useState<Post | null>(null);
+  const [openPostModal, setOpenPostModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSort, setActiveSort] = useState<'new' | 'top' | 'trending'>('new');
 
@@ -39,6 +41,14 @@ const Index = () => {
       setSelectedPost(post);
       setIsCommentModalOpen(true);
     }
+  };
+
+  const handleOpenPostModal = (post: Post) => {
+    setSelectedPost(post);
+    setOpenPostModal(true);
+  };
+  const handleClosePostModal = () => {
+    setOpenPostModal(false);
   };
 
   const handleSubmitComment = (postId: string, content: string) => {
@@ -71,7 +81,6 @@ const Index = () => {
       <main className="flex-1 flex flex-col items-start w-full">
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:pl-20 lg:pr-6">
           <div className="w-full lg:max-w-2xl">
-
             {/* Welcome Section with margin top added */}
             <div className="mb-6 sm:mb-8 p-5 sm:p-8 border border-green-200 bg-green-50/80 rounded-xl shadow-md mt-3 sm:mt-6">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
@@ -176,6 +185,7 @@ const Index = () => {
                     onComment={handleComment}
                     isFirst={idx === 0}
                     isLast={idx === sortedPosts.length - 1}
+                    onOpenModal={handleOpenPostModal}
                   />
                 ))
               )}
@@ -195,6 +205,15 @@ const Index = () => {
         onClose={() => setIsCommentModalOpen(false)}
         post={selectedPost}
         onSubmitComment={handleSubmitComment}
+      />
+
+      {/* Single Post Modal */}
+      <PostModal
+        open={openPostModal}
+        onClose={handleClosePostModal}
+        post={selectedPost}
+        onVote={handleVote}
+        onComment={handleComment}
       />
     </div>
   );
