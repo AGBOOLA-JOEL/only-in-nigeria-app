@@ -1,10 +1,10 @@
-
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ArrowUp, MessageCircle, Share2 } from "lucide-react";
 import { Post } from "@/types/post";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
 
 interface PostCardProps {
   post: Post;
@@ -12,6 +12,8 @@ interface PostCardProps {
   onComment: (postId: string) => void;
   showComments?: boolean;
   isLink?: boolean;
+  isFirst?: boolean;
+  isLast?: boolean;
 }
 
 const PostCard = ({
@@ -20,6 +22,8 @@ const PostCard = ({
   onComment,
   showComments = false,
   isLink = true,
+  isFirst = false,
+  isLast = false,
 }: PostCardProps) => {
   const formatTimeAgo = (timestampStr: string) => {
     const now = Date.now();
@@ -52,7 +56,20 @@ const PostCard = ({
   };
 
   return (
-    <Card className="flex justify-between items-stretch border border-gray-200 bg-white shadow-xs rounded-xl p-0 min-h-[110px] group transition-all duration-300 mb-0">
+    <Card
+      className={cn(
+        "flex justify-between items-stretch border border-gray-200 bg-white shadow-xs p-0 min-h-[110px] group transition-all duration-300",
+        !isFirst && !isLast && "rounded-none",
+        isFirst && "rounded-t-xl",
+        isLast && "rounded-b-xl",
+        "border-b-0",
+        isLast && "border-b"
+      )}
+      style={{
+        marginBottom: 0,
+        borderBottomWidth: isLast ? undefined : 0,
+      }}
+    >
       {/* Main Content */}
       <div className="flex-1 flex flex-col px-5 py-4 min-w-0">
         <h3 className="text-base sm:text-lg font-bold text-gray-900 leading-tight mb-1 break-words line-clamp-2">
@@ -113,7 +130,7 @@ const PostCard = ({
         )}
       </div>
       {/* Upvote Section on Right */}
-      <div className="flex flex-col items-center justify-center w-12 sm:w-14 px-2 sm:px-3 bg-white rounded-r-xl border-l border-gray-100">
+      <div className="flex flex-col items-center justify-center w-12 sm:w-14 px-2 sm:px-3 bg-white border-l border-gray-100">
         <Button
           variant="ghost"
           size="icon"

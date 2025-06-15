@@ -96,7 +96,7 @@ const Index = () => {
         <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
         
         {/* Posts Container */}
-        <div className="space-y-3 sm:space-y-4">
+        <div>
           {sortedPosts.length === 0 ? (
             <div className="text-center py-12 sm:py-16">
               <div className="text-6xl sm:text-7xl mb-4">🇳🇬</div>
@@ -119,12 +119,14 @@ const Index = () => {
               )}
             </div>
           ) : (
-            sortedPosts.map(post => (
+            sortedPosts.map((post, idx) => (
               <PostCard
                 key={post.id}
                 post={post}
                 onVote={handleVote}
                 onComment={handleComment}
+                isFirst={idx === 0}
+                isLast={idx === sortedPosts.length - 1}
               />
             ))
           )}
