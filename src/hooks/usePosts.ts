@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Post, Comment } from '@/types/post';
@@ -82,10 +83,25 @@ export const usePosts = () => {
 
     const addPostMutation = useMutation({
         mutationFn: async ({ title, content, name }: { title: string; content: string; name?: string }) => {
-            // Insert into posts with upvote = 1 and name
-            const insertObj: Record<string, any> = { title, content, votes: 1 };
-            if (name) insertObj.name = name;
-            const { data, error } = await supabase.from('posts').insert(insertObj).select().single();
+            // Build insert object to match Supabase Insert type exactly
+            const insertObj: {
+                title: string;
+                content: string;
+                votes?: number;
+                name?: string | null;
+            } = {
+                title,
+                content,
+                votes: 1,
+                name: typeof name === "string" && name.trim() !== "" ? name : null,
+            };
+
+            const { data, error } = await supabase
+                .from('posts')
+                .insert(insertObj)
+                .select()
+                .single();
+
             if (error) throw new Error(error.message);
             setVotedPost(data.id, 'up'); // User who creates a post auto-upvotes it.
             return data;
