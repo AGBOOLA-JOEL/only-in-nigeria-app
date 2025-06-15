@@ -79,8 +79,9 @@ const Index = () => {
     <div className="min-h-screen bg-[#f7f7fa] flex flex-col">
       <Header onCreatePost={() => setIsCreateModalOpen(true)} />
       <main className="flex-1 flex flex-col items-start w-full">
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:pl-20 lg:pr-6">
-          <div className="w-full lg:max-w-2xl">
+        {/* Wider content container for desktop */}
+        <div className="w-full max-w-[96rem] mx-auto px-2 sm:px-4 lg:pl-24 lg:pr-8">
+          <div className="w-full lg:max-w-4xl">
             {/* Welcome Section with margin top added */}
             <div className="mb-6 sm:mb-8 p-5 sm:p-8 border border-green-200 bg-green-50/80 rounded-xl shadow-md mt-3 sm:mt-6">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
@@ -109,9 +110,9 @@ const Index = () => {
             </div>
 
             {/* Filter row: Responsive */}
-            <div className="flex items-center gap-2 mb-6">
+            <div className="flex items-center gap-2 mb-6 overflow-x-auto">
               {/* Desktop/Tablet: Show all sort tabs, search & button */}
-              <div className="hidden sm:flex items-center flex-1 gap-2">
+              <div className="hidden sm:flex items-center flex-1 gap-2 min-w-0">
                 <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
                 <div className="flex-1" />
                 <SearchBox value={searchTerm} onChange={setSearchTerm} />
