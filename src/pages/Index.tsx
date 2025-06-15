@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import PostCard from '@/components/PostCard';
@@ -66,9 +65,19 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#f7f7fa] flex flex-col">
       <Header onCreatePost={() => setIsCreateModalOpen(true)} />
-      <main className="flex-1 flex flex-col items-center justify-start w-full px-2 py-4 sm:px-0">
+      <main
+        className="flex-1 flex flex-col items-center justify-start w-full px-2 py-4 sm:px-0"
+      >
         <div
-          className="w-full max-w-2xl mx-auto px-2 sm:px-0"
+          className="
+            w-full
+            max-w-2xl
+            mx-auto
+            px-2
+            sm:px-0
+            lg:mx-0
+            lg:ml-[104px]  /* Move to the right on large screens */
+          "
         >
           {/* Welcome Section */}
           <div className="mb-6 sm:mb-8 p-5 sm:p-8 border border-green-200 bg-green-50/80 rounded-xl shadow-md">
@@ -155,4 +164,3 @@ const Index = () => {
 };
 
 export default Index;
-
