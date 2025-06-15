@@ -72,7 +72,7 @@ const Index = () => {
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:pl-20 lg:pr-6">
           <div className="w-full lg:max-w-2xl">
             {/* Welcome Section */}
-            <div className="mb-6 sm:mb-8 p-5 sm:p-8 border border-green-200 bg-green-50/80 rounded-xl shadow-md">
+            <div className="mb-6 sm:mb-8 p-5 sm:p-8 border border-green-200 bg-green-50/80 rounded-xl shadow-md mt-3">
               <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-3">
                 Share your Nigerian story 🇳🇬
               </h2>
@@ -98,18 +98,20 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Filter row: SortTabs + SearchBox + Post Story (right) */}
+            {/* Filter row: SortTabs + (space) + SearchBox + Post Button aligned right */}
             <div className="flex items-center gap-2 mb-6">
               <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
+              
+              <div className="flex-1" />
+              
               <SearchBox
                 value={searchTerm}
                 onChange={setSearchTerm}
-                onFilterClick={() => {/* Add filter modal logic here if needed */}}
               />
-              <div className="flex-1" />
+
               <Button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="flex items-center px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm shadow transition-all"
+                className="flex items-center px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm shadow transition-all ml-2"
                 type="button"
               >
                 <Plus size={18} className="mr-2" />
