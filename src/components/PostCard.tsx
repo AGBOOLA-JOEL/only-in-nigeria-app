@@ -55,6 +55,21 @@ const PostCard = ({
     );
   };
 
+  // For name display, if present
+  const renderPosterName = () => {
+    if (post.name && post.name.trim() !== "") {
+      return (
+        <span className="ml-2 text-xs font-semibold text-green-700 inline-flex items-center">
+          <span className="bg-green-50 px-2 py-0.5 rounded border border-green-100 mr-1">&#128100;</span>
+          {post.name}
+        </span>
+      );
+    }
+    return (
+      <span className="ml-2 text-xs font-medium text-gray-400">(Anonymous)</span>
+    );
+  };
+
   return (
     <Card
       className={cn(
@@ -80,6 +95,7 @@ const PostCard = ({
           ) : (
             post.title
           )}
+          {renderPosterName()}
         </h3>
         <p className="text-sm sm:text-base text-gray-800 opacity-90 leading-relaxed break-words line-clamp-3 mb-2">
           {post.content}

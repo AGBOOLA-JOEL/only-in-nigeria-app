@@ -8,19 +8,21 @@ import { Textarea } from "@/components/ui/textarea";
 interface CreatePostModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (title: string, content: string) => void;
+  onSubmit: (title: string, content: string, name?: string) => void;
 }
 
 const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalProps) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [name, setName] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (title.trim() && content.trim()) {
-      onSubmit(title.trim(), content.trim());
+      onSubmit(title.trim(), content.trim(), name.trim() || undefined);
       setTitle("");
       setContent("");
+      setName("");
       onClose();
     }
   };
@@ -41,9 +43,9 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalProps) =>
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="text-base sm:text-lg border-gray-200 focus:border-green-300 focus:ring-green-200"
+              maxLength={120}
             />
           </div>
-          
           <div>
             <Textarea
               placeholder="Tell us more about this story... Share your experiences, observations, or anything uniquely Nigerian! 🇳🇬"
@@ -51,9 +53,19 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalProps) =>
               onChange={(e) => setContent(e.target.value)}
               rows={6}
               className="resize-none border-gray-200 focus:border-green-300 focus:ring-green-200 text-sm sm:text-base"
+              maxLength={2000}
             />
           </div>
-          
+          <div>
+            <Input
+              placeholder="Your Name (optional)"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              className="text-base border-gray-200 focus:border-green-300 focus:ring-green-200"
+              maxLength={60}
+            />
+            <p className="text-gray-400 text-xs mt-1 ml-1">You can use any name or leave blank for anonymous.</p>
+          </div>          
           <div className="flex flex-col sm:flex-row justify-end gap-3 pt-4">
             <Button 
               type="button" 

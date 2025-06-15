@@ -25,8 +25,8 @@ const Index = () => {
     }
   }, [posts, selectedPost]);
 
-  const handleCreatePost = (title: string, content: string) => {
-    addPost({ title, content });
+  const handleCreatePost = (title: string, content: string, name?: string) => {
+    addPost({ title, content, name });
   };
 
   const handleVote = (postId: string, voteType: 'up') => {
@@ -109,11 +109,11 @@ const Index = () => {
               <div className="flex-1" />
               <Button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="flex items-center px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white text-sm shadow transition-all"
+                className="flex items-center px-4 py-2 rounded-md bg-green-600 hover:bg-green-700 text-white text-sm shadow transition-all"
                 type="button"
               >
                 <Plus size={18} className="mr-2" />
-                Post your Portugal story
+                Post your Nigeria story
               </Button>
             </div>
 

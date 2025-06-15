@@ -1,4 +1,3 @@
-
 export interface Comment {
   id: string;
   content: string;
@@ -15,4 +14,5 @@ export interface Post {
   commentCount: number;
   comments: Comment[];
   created_at: string;
+  name?: string | null; // Added optional name
 }

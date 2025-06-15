@@ -44,6 +44,7 @@ export type Database = {
           created_at: string
           downvotes: number
           id: string
+          name: string | null
           title: string
           votes: number
         }
@@ -52,6 +53,7 @@ export type Database = {
           created_at?: string
           downvotes?: number
           id?: string
+          name?: string | null
           title: string
           votes?: number
         }
@@ -60,6 +62,7 @@ export type Database = {
           created_at?: string
           downvotes?: number
           id?: string
+          name?: string | null
           title?: string
           votes?: number
         }
