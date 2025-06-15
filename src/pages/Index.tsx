@@ -70,8 +70,8 @@ const Index = () => {
           className="
             w-full
             max-w-2xl
-            mx-auto
-            px-3 sm:px-4 lg:px-6
+            lg:ml-[calc(theme(spacing.6)+theme(spacing.2))]   /* lg: padding-left (header: px-6) + flag margin (mr-2) */
+            px-3 sm:px-4 lg:px-0
           "
         >
           {/* Welcome Section */}
