@@ -26,7 +26,7 @@ const Index = () => {
     addPost({ title, content });
   };
 
-  const handleVote = (postId: string, voteType: 'up' | 'down') => {
+  const handleVote = (postId: string, voteType: 'up') => {
     voteOnPost({ postId, voteType });
   };
 

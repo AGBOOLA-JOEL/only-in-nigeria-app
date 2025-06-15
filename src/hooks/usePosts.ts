@@ -1,17 +1,26 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Post, Comment } from '@/types/post';
 
 // Client-side vote tracking in localStorage
-const getVotedPosts = (): Record<string, 'up' | 'down'> => {
+const getVotedPosts = (): Record<string, 'up'> => {
   if (typeof window === 'undefined') return {};
   const voted = localStorage.getItem('nigeria-voted-posts');
-  return voted ? JSON.parse(voted) : {};
+  // Only allow 'up' for userVote
+  const parsed = voted ? JSON.parse(voted) : {};
+  // Filter out any old "down" votes for safety
+  Object.keys(parsed).forEach(k => {
+    if (parsed[k] !== "up") {
+      delete parsed[k];
+    }
+  });
+  return parsed;
 };
 
-const setVotedPost = (postId: string, voteType: 'up' | 'down' | null) => {
+const setVotedPost = (postId: string, voteType: 'up' | null) => {
   const voted = getVotedPosts();
-  if (voteType) {
+  if (voteType === 'up') {
     voted[postId] = voteType;
   } else {
     delete voted[postId];
@@ -62,7 +71,7 @@ export const usePosts = () => {
                     votes: typeof p.votes === "number" ? p.votes : 0,
                     comments: postComments.sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
                     commentCount: postComments.length,
-                    userVote: votedPosts[p.id] || null,
+                    userVote: votedPosts[p.id] === "up" ? "up" : null, // Only "up" or null
                 };
             });
             

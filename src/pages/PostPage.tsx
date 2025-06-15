@@ -21,7 +21,7 @@ const PostPage = () => {
     setCurrentPost(posts.find((p) => p.id === postId));
   }, [posts, postId]);
 
-  const handleVote = (postId: string, voteType: "up" | "down") => {
+  const handleVote = (postId: string, voteType: "up") => {
     voteOnPost({ postId, voteType });
   };
 
