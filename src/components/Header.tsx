@@ -18,19 +18,26 @@ const Header = ({ onCreatePost }: HeaderProps) => {
           {/* Logo and Flag */}
           <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
             <span className="flex items-center">
-              {/* Nigerian flag image on the left of the title */}
-              <img
-                src={NIGERIAN_FLAG_SRC}
-                alt="Nigerian flag"
-                className="w-7 h-5 sm:w-9 sm:h-6 object-cover rounded-sm mr-2"
-                style={{ boxShadow: "0 0 2px rgba(0,0,0,0.06)" }}
-              />
+              {/* Nigerian flag image centered vertically and fully inside the container */}
+              <span className="flex items-center justify-center h-full">
+                <img
+                  src={NIGERIAN_FLAG_SRC}
+                  alt="Nigerian flag"
+                  className="w-7 h-5 sm:w-9 sm:h-6 object-contain rounded-sm mr-2"
+                  style={{
+                    display: 'block',
+                    boxShadow: "0 0 2px rgba(0,0,0,0.06)",
+                    objectFit: "contain",
+                    maxHeight: "1.65rem",
+                    maxWidth: "2.5rem",
+                  }}
+                />
+              </span>
               <span className="text-lg sm:text-xl lg:text-2xl font-bold text-green-600 whitespace-nowrap">
                 Only in Nigeria
               </span>
             </span>
           </div>
-          
           {/* Twitter Icon Button + user name */}
           <div className="flex items-center space-x-2 ml-2">
             <a
@@ -72,4 +79,3 @@ const Header = ({ onCreatePost }: HeaderProps) => {
 };
 
 export default Header;
-
