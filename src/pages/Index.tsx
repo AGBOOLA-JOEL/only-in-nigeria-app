@@ -46,49 +46,56 @@ const Index = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="text-6xl mb-4">🇳🇬</div>
-          <h2 className="text-2xl font-bold text-green-600 mb-2">Loading Nigeria Stories...</h2>
-          <p className="text-gray-600">Gathering the most interesting stories from across Nigeria</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-white px-4">
+        <div className="text-center max-w-md">
+          <div className="text-6xl sm:text-7xl mb-4 animate-pulse">🇳🇬</div>
+          <h2 className="text-xl sm:text-2xl font-bold text-green-600 mb-2">Loading Nigeria Stories...</h2>
+          <p className="text-gray-600 text-sm sm:text-base">Gathering the most interesting stories from across Nigeria</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50/20 to-gray-50">
       <Header 
         onCreatePost={() => setIsCreateModalOpen(true)}
         searchTerm={searchTerm}
         onSearchChange={setSearchTerm}
       />
       
-      <main className="max-w-4xl mx-auto px-4 py-6">
-        <div className="mb-6">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome to Only in Nigeria! 🇳🇬</h2>
-          <p className="text-gray-600">Share your uniquely Nigerian experiences, stories, and observations. No authentication needed - just dive in and start sharing!</p>
+      <main className="max-w-4xl mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6">
+        {/* Welcome Section */}
+        <div className="mb-6 sm:mb-8 text-center sm:text-left">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">
+            Welcome to Only in Nigeria! 🇳🇬
+          </h2>
+          <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed max-w-3xl">
+            Share your uniquely Nigerian experiences, stories, and observations. No authentication needed - 
+            just dive in and start sharing your amazing Nigeria stories!
+          </p>
         </div>
 
         <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
         
-        <div className="space-y-4">
+        {/* Posts Container */}
+        <div className="space-y-3 sm:space-y-4">
           {sortedPosts.length === 0 ? (
-            <div className="text-center py-12">
-              <div className="text-6xl mb-4">🇳🇬</div>
-              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+            <div className="text-center py-12 sm:py-16">
+              <div className="text-6xl sm:text-7xl mb-4">🇳🇬</div>
+              <h3 className="text-lg sm:text-xl font-semibold text-gray-700 mb-2">
                 {searchTerm ? 'No stories found' : 'No stories yet'}
               </h3>
-              <p className="text-gray-500 mb-4">
+              <p className="text-gray-500 mb-6 text-sm sm:text-base max-w-md mx-auto">
                 {searchTerm 
-                  ? 'Try adjusting your search terms' 
-                  : 'Be the first to share a uniquely Nigerian experience!'
+                  ? 'Try adjusting your search terms or explore different topics' 
+                  : 'Be the first to share a uniquely Nigerian experience! From Lagos traffic to Jollof rice debates - we want to hear it all!'
                 }
               </p>
               {!searchTerm && (
                 <button
                   onClick={() => setIsCreateModalOpen(true)}
-                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg transition-colors"
+                  className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg transition-all duration-200 shadow-lg hover:shadow-xl text-sm sm:text-base"
                 >
                   Share Your Story
                 </button>

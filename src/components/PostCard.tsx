@@ -19,66 +19,93 @@ const PostCard = ({ post, onVote, onComment, showComments = false }: PostCardPro
     const hours = Math.floor(diff / (1000 * 60 * 60));
     
     if (minutes < 60) {
-      return `${minutes} minutes ago`;
+      return `${minutes}m ago`;
     } else if (hours < 24) {
-      return `About ${hours} hours ago`;
+      return `${hours}h ago`;
     } else {
       const days = Math.floor(hours / 24);
-      return `${days} days ago`;
+      return `${days}d ago`;
     }
   };
 
   return (
-    <Card className="p-4 mb-4 hover:shadow-md transition-shadow">
-      <div className="flex space-x-3">
-        <div className="flex flex-col items-center space-y-1">
+    <Card className="overflow-hidden hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-green-200 bg-white">
+      <div className="flex gap-2 sm:gap-3 p-3 sm:p-4">
+        {/* Vote Section */}
+        <div className="flex flex-col items-center gap-1 flex-shrink-0">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onVote(post.id, 'up')}
-            className={`p-1 ${post.userVote === 'up' ? 'text-green-600' : 'text-gray-400'}`}
+            className={`p-1 hover:bg-green-50 transition-colors ${
+              post.userVote === 'up' ? 'text-green-600 bg-green-50' : 'text-gray-400 hover:text-green-600'
+            }`}
           >
-            <ChevronUp className="w-6 h-6" />
+            <ChevronUp className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
-          <span className="text-sm font-semibold text-gray-700">{post.votes}</span>
+          <span className={`text-xs sm:text-sm font-semibold px-1 py-0.5 rounded min-w-[24px] text-center ${
+            post.votes > 0 ? 'text-green-600' : post.votes < 0 ? 'text-red-600' : 'text-gray-600'
+          }`}>
+            {post.votes}
+          </span>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => onVote(post.id, 'down')}
-            className={`p-1 ${post.userVote === 'down' ? 'text-red-600' : 'text-gray-400'}`}
+            className={`p-1 hover:bg-red-50 transition-colors ${
+              post.userVote === 'down' ? 'text-red-600 bg-red-50' : 'text-gray-400 hover:text-red-600'
+            }`}
           >
-            <ChevronDown className="w-6 h-6" />
+            <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5" />
           </Button>
         </div>
         
-        <div className="flex-1">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">{post.title}</h3>
-          <p className="text-gray-700 mb-3">{post.content}</p>
+        {/* Content Section */}
+        <div className="flex-1 min-w-0">
+          <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 leading-tight break-words">
+            {post.title}
+          </h3>
+          <p className="text-sm sm:text-base text-gray-700 mb-3 leading-relaxed break-words line-clamp-3">
+            {post.content}
+          </p>
           
-          <div className="flex items-center space-x-4 text-sm text-gray-500">
-            <span>🇳🇬 Nigeria</span>
-            <span>{formatTimeAgo(post.timestamp)}</span>
+          {/* Meta Information */}
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
+            <span className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full font-medium">
+              🇳🇬 Nigeria
+            </span>
+            <span className="whitespace-nowrap">{formatTimeAgo(post.timestamp)}</span>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex items-center gap-1 sm:gap-3 mt-3 pt-3 border-t border-gray-100">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => onComment(post.id)}
-              className="flex items-center space-x-1 text-gray-500 hover:text-gray-700"
+              className="flex items-center gap-1 sm:gap-2 text-gray-500 hover:text-green-600 hover:bg-green-50 transition-colors text-xs sm:text-sm px-2 sm:px-3 py-1"
             >
-              <MessageCircle className="w-4 h-4" />
-              <span>{post.commentCount} comments</span>
+              <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span>{post.commentCount} {post.commentCount === 1 ? 'comment' : 'comments'}</span>
             </Button>
-            <Button variant="ghost" size="sm" className="flex items-center space-x-1 text-gray-500 hover:text-gray-700">
-              <Share2 className="w-4 h-4" />
-              <span>Share</span>
+            
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="flex items-center gap-1 sm:gap-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 transition-colors text-xs sm:text-sm px-2 sm:px-3 py-1"
+            >
+              <Share2 className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Share</span>
             </Button>
           </div>
           
+          {/* Comments Section */}
           {showComments && post.comments && post.comments.length > 0 && (
-            <div className="mt-4 pl-4 border-l-2 border-gray-200 space-y-3">
+            <div className="mt-4 space-y-3">
               {post.comments.map((comment) => (
-                <div key={comment.id} className="bg-gray-50 p-3 rounded">
-                  <p className="text-gray-700">{comment.content}</p>
-                  <p className="text-xs text-gray-500 mt-1">{formatTimeAgo(comment.timestamp)}</p>
+                <div key={comment.id} className="bg-gray-50 p-3 rounded-lg border-l-2 border-green-200">
+                  <p className="text-sm text-gray-700 break-words">{comment.content}</p>
+                  <p className="text-xs text-gray-500 mt-2">{formatTimeAgo(comment.timestamp)}</p>
                 </div>
               ))}
             </div>
