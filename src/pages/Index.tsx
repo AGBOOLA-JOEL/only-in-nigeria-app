@@ -6,6 +6,7 @@ import CommentModal from '@/components/CommentModal';
 import SortTabs from '@/components/SortTabs';
 import { usePosts } from '@/hooks/usePosts';
 import { Post } from '@/types/post';
+import { Button } from "@/components/ui/button";
 
 const Index = () => {
   const { posts, isLoading, addPost, voteOnPost, addComment, sortPosts } = usePosts();
