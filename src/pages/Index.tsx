@@ -65,13 +65,14 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#f7f7fa] flex flex-col">
       <Header onCreatePost={() => setIsCreateModalOpen(true)} />
-      <main className="flex-1 flex flex-col items-center justify-start w-full px-2 py-4 sm:px-0">
+      <main className="flex-1 flex flex-col items-start w-full px-2 py-4 sm:px-0">
+        {/* On desktop: align left edge of main content with header. 
+            On mobile/tablet: use padding for readability. */}
         <div
           className="
             w-full
-            max-w-2xl
-            lg:ml-[calc(theme(spacing.6)+theme(spacing.2))]   /* lg: padding-left (header: px-6) + flag margin (mr-2) */
-            px-3 sm:px-4 lg:px-0
+            lg:pl-6    /* matches header's left padding (px-6 = pl-6 pr-6) */
+            px-3 sm:px-4
           "
         >
           {/* Welcome Section */}
