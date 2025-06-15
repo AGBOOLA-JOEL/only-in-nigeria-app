@@ -1,33 +1,49 @@
 
 import { Button } from "@/components/ui/button";
+import { Clock, TrendingUp, Flame } from "lucide-react";
+import React from "react";
 
 interface SortTabsProps {
   activeSort: 'new' | 'top' | 'trending';
   onSortChange: (sort: 'new' | 'top' | 'trending') => void;
 }
 
-const SortTabs = ({ activeSort, onSortChange }: SortTabsProps) => {
-  const tabs = [
-    { key: 'new' as const, label: '🆕 New', shortLabel: 'New' },
-    { key: 'top' as const, label: '⭐ Top', shortLabel: 'Top' },
-    { key: 'trending' as const, label: '🔥 Trending', shortLabel: 'Hot' }
-  ];
+const tabData = [
+  {
+    key: 'new' as const,
+    label: 'New',
+    icon: <Clock size={18} className="mr-1" />
+  },
+  {
+    key: 'top' as const,
+    label: 'Top',
+    icon: <TrendingUp size={18} className="mr-1" />
+  },
+  {
+    key: 'trending' as const,
+    label: 'Trending',
+    icon: <Flame size={18} className="mr-1" />
+  }
+];
 
+const SortTabs: React.FC<SortTabsProps> = ({ activeSort, onSortChange }) => {
   return (
-    <div className="flex gap-1 mb-4 sm:mb-6 overflow-x-auto pb-1">
-      {tabs.map((tab) => (
+    <div className="flex gap-2">
+      {tabData.map((tab) => (
         <Button
           key={tab.key}
-          variant={activeSort === tab.key ? 'default' : 'ghost'}
-          onClick={() => onSortChange(tab.key)}
-          className={`whitespace-nowrap text-xs sm:text-sm px-3 sm:px-4 py-2 transition-all duration-200 ${
+          variant={activeSort === tab.key ? "secondary" : "outline"}
+          size="sm"
+          className={`font-medium px-4 py-2 flex items-center rounded-md ${
             activeSort === tab.key
-              ? 'bg-green-600 hover:bg-green-700 text-white shadow-md'
-              : 'text-gray-600 hover:text-green-600 hover:bg-green-50'
+              ? "bg-gray-100 text-gray-800"
+              : "bg-white text-gray-600 border border-gray-300"
           }`}
+          onClick={() => onSortChange(tab.key)}
+          type="button"
         >
-          <span className="hidden sm:inline">{tab.label}</span>
-          <span className="sm:hidden">{tab.shortLabel}</span>
+          {tab.icon}
+          {tab.label}
         </Button>
       ))}
     </div>

@@ -4,9 +4,11 @@ import PostCard from '@/components/PostCard';
 import CreatePostModal from '@/components/CreatePostModal';
 import CommentModal from '@/components/CommentModal';
 import SortTabs from '@/components/SortTabs';
+import SearchBox from '@/components/SearchBox';
 import { usePosts } from '@/hooks/usePosts';
 import { Post } from '@/types/post';
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const Index = () => {
   const { posts, isLoading, addPost, voteOnPost, addComment, sortPosts } = usePosts();
@@ -67,9 +69,7 @@ const Index = () => {
     <div className="min-h-screen bg-[#f7f7fa] flex flex-col">
       <Header onCreatePost={() => setIsCreateModalOpen(true)} />
       <main className="flex-1 flex flex-col items-start w-full">
-        {/* Align left edge of content with header text, add even more left padding on desktop */}
         <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:pl-20 lg:pr-6">
-          {/* Center/narrow main content column; aligns left edge with header text */}
           <div className="w-full lg:max-w-2xl">
             {/* Welcome Section */}
             <div className="mb-6 sm:mb-8 p-5 sm:p-8 border border-green-200 bg-green-50/80 rounded-xl shadow-md">
@@ -98,14 +98,22 @@ const Index = () => {
               </div>
             </div>
 
-            {/* Filter row: SortTabs + Post Story (right) */}
-            <div className="flex items-center justify-between mb-4 sm:mb-6">
+            {/* Filter row: SortTabs + SearchBox + Post Story (right) */}
+            <div className="flex items-center gap-2 mb-6">
               <SortTabs activeSort={activeSort} onSortChange={setActiveSort} />
+              <SearchBox
+                value={searchTerm}
+                onChange={setSearchTerm}
+                onFilterClick={() => {/* Add filter modal logic here if needed */}}
+              />
+              <div className="flex-1" />
               <Button
                 onClick={() => setIsCreateModalOpen(true)}
-                className="bg-green-600 hover:bg-green-700 text-white shadow-lg hover:shadow-xl transition-all duration-200 text-xs sm:text-sm px-2 sm:px-4 py-2 whitespace-nowrap ml-3"
+                className="flex items-center px-4 py-2 rounded-md bg-red-600 hover:bg-red-700 text-white text-sm shadow transition-all"
+                type="button"
               >
-                <span className="hidden sm:inline">Post Story</span>
+                <Plus size={18} className="mr-2" />
+                Post your Portugal story
               </Button>
             </div>
 
