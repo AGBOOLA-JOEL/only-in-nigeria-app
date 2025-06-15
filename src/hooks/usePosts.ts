@@ -1,159 +1,151 @@
 
-import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 import { Post, Comment } from '@/types/post';
 
-const SAMPLE_POSTS: Post[] = [
-  {
-    id: '1',
-    title: 'Nigerian drivers and their road rage',
-    content: 'Portuguese drivers have so much of road rage with 3 vehicles on the road 😂. But have you seen Lagos traffic? We have 300 vehicles and still maintain our sanity (mostly)!',
-    votes: 15,
-    commentCount: 8,
-    timestamp: Date.now() - 2 * 60 * 60 * 1000, // 2 hours ago
-    comments: [
-      {
-        id: '1-1',
-        content: 'Lagos traffic is a whole different level of patience training 😅',
-        timestamp: Date.now() - 1 * 60 * 60 * 1000,
-      }
-    ]
-  },
-  {
-    id: '2',
-    title: 'Only in Nigeria: Generator University',
-    content: 'My neighbor bought a generator for his generator. When I asked why, he said "backup for the backup, you never know when NEPA will take light from both!" 😂',
-    votes: 32,
-    commentCount: 12,
-    timestamp: Date.now() - 4 * 60 * 60 * 1000,
-    comments: []
-  },
-  {
-    id: '3',
-    title: 'Nigerian parents and technology',
-    content: 'My mum called me to come fix the TV. I came home and found out she was pressing the volume button on the remote to change channels. When I showed her the channel button, she said "But this one was working fine yesterday!" 🤦‍♂️',
-    votes: 28,
-    commentCount: 6,
-    timestamp: Date.now() - 6 * 60 * 60 * 1000,
-    comments: []
+// Client-side vote tracking in localStorage
+const getVotedPosts = (): Record<string, 'up' | 'down'> => {
+  if (typeof window === 'undefined') return {};
+  const voted = localStorage.getItem('nigeria-voted-posts');
+  return voted ? JSON.parse(voted) : {};
+};
+
+const setVotedPost = (postId: string, voteType: 'up' | 'down' | null) => {
+  const voted = getVotedPosts();
+  if (voteType) {
+    voted[postId] = voteType;
+  } else {
+    delete voted[postId];
   }
-];
+  localStorage.setItem('nigeria-voted-posts', JSON.stringify(voted));
+};
+
 
 export const usePosts = () => {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+    const queryClient = useQueryClient();
 
-  useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
-      const savedPosts = localStorage.getItem('nigeria-posts');
-      if (savedPosts) {
-        setPosts(JSON.parse(savedPosts));
-      } else {
-        setPosts(SAMPLE_POSTS);
-        localStorage.setItem('nigeria-posts', JSON.stringify(SAMPLE_POSTS));
-      }
-      setIsLoading(false);
-    }, 1000);
+    const { data, isLoading } = useQuery({
+        queryKey: ['posts'],
+        queryFn: async (): Promise<Post[]> => {
+            // Fetch posts and comments in parallel
+            const postsPromise = supabase.from('posts').select('*').order('created_at', { ascending: false });
+            const commentsPromise = supabase.from('comments').select('*');
+            
+            const [postsRes, commentsRes] = await Promise.all([postsPromise, commentsPromise]);
+            
+            if (postsRes.error) throw new Error(postsRes.error.message);
+            if (commentsRes.error) throw new Error(commentsRes.error.message);
 
-    return () => clearTimeout(timer);
-  }, []);
+            const postsData = postsRes.data || [];
+            const commentsData = commentsRes.data || [];
+            const votedPosts = getVotedPosts();
 
-  const saveToStorage = (updatedPosts: Post[]) => {
-    localStorage.setItem('nigeria-posts', JSON.stringify(updatedPosts));
-  };
+            // Group comments by post_id
+            const commentsByPostId = commentsData.reduce<Record<string, Comment[]>>((acc, comment) => {
+                const typedComment: Comment = {
+                    id: comment.id,
+                    content: comment.content,
+                    created_at: comment.created_at,
+                    post_id: comment.post_id,
+                };
+                if (!acc[typedComment.post_id]) {
+                    acc[typedComment.post_id] = [];
+                }
+                acc[typedComment.post_id].push(typedComment);
+                return acc;
+            }, {});
 
-  const addPost = (title: string, content: string) => {
-    const newPost: Post = {
-      id: Date.now().toString(),
-      title,
-      content,
-      votes: 1,
-      userVote: 'up',
-      commentCount: 0,
-      comments: [],
-      timestamp: Date.now()
-    };
-    
-    const updatedPosts = [newPost, ...posts];
-    setPosts(updatedPosts);
-    saveToStorage(updatedPosts);
-  };
+            // Combine posts with their comments and vote status
+            const posts: Post[] = postsData.map(p => {
+                const postComments = commentsByPostId[p.id] || [];
+                return {
+                    ...p,
+                    comments: postComments.sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
+                    commentCount: postComments.length,
+                    userVote: votedPosts[p.id] || null,
+                };
+            });
+            
+            return posts;
+        },
+        staleTime: 60 * 1000, // 1 minute
+    });
 
-  const voteOnPost = (postId: string, voteType: 'up' | 'down') => {
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        let newVotes = post.votes;
-        let newUserVote: 'up' | 'down' | null = voteType;
+    const addPostMutation = useMutation({
+        mutationFn: async ({ title, content }: { title: string; content: string }) => {
+            const { data, error } = await supabase.from('posts').insert({ title, content, votes: 1 }).select().single();
+            if (error) throw new Error(error.message);
+            setVotedPost(data.id, 'up'); // User who creates a post auto-upvotes it.
+            return data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
+        },
+    });
 
-        // Handle vote logic
-        if (post.userVote === voteType) {
-          // Remove vote if clicking same vote
-          newUserVote = null;
-          newVotes += voteType === 'up' ? -1 : 1;
-        } else if (post.userVote) {
-          // Switch vote
-          newVotes += voteType === 'up' ? 2 : -2;
-        } else {
-          // New vote
-          newVotes += voteType === 'up' ? 1 : -1;
+    const addCommentMutation = useMutation({
+        mutationFn: async ({ postId, content }: { postId: string; content: string }) => {
+            const { error } = await supabase.from('comments').insert({ post_id: postId, content });
+            if (error) throw new Error(error.message);
+        },
+        onSuccess: (_data, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
+        },
+    });
+
+    const voteOnPostMutation = useMutation({
+        mutationFn: async ({ postId, voteType }: { postId: string; voteType: 'up' | 'down' }) => {
+            const currentVote = getVotedPosts()[postId];
+            let voteValue = 0;
+            let nextVoteState: 'up' | 'down' | null = voteType;
+
+            if (currentVote === voteType) {
+                voteValue = voteType === 'up' ? -1 : 1;
+                nextVoteState = null;
+            } else if (currentVote) {
+                voteValue = voteType === 'up' ? 2 : -2;
+            } else {
+                voteValue = voteType === 'up' ? 1 : -1;
+            }
+            
+            const { error } = await supabase.rpc('update_post_vote', {
+                post_id_to_update: postId,
+                vote_value: voteValue,
+            });
+
+            if (error) throw new Error(error.message);
+            
+            setVotedPost(postId, nextVoteState);
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['posts'] });
+        },
+    });
+
+    const sortPosts = (postsToSort: Post[], sortType: 'new' | 'top' | 'trending') => {
+        if (!postsToSort) return [];
+        switch (sortType) {
+          case 'new':
+            return [...postsToSort].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+          case 'top':
+            return [...postsToSort].sort((a, b) => b.votes - a.votes);
+          case 'trending':
+            return [...postsToSort].sort((a, b) => {
+              const aScore = a.votes / (Date.now() - new Date(a.created_at).getTime() + 1);
+              const bScore = b.votes / (Date.now() - new Date(b.created_at).getTime() + 1);
+              return bScore - aScore;
+            });
+          default:
+            return postsToSort;
         }
-
-        return { ...post, votes: newVotes, userVote: newUserVote };
-      }
-      return post;
-    });
-    
-    setPosts(updatedPosts);
-    saveToStorage(updatedPosts);
-  };
-
-  const addComment = (postId: string, content: string) => {
-    const newComment: Comment = {
-      id: `${postId}-${Date.now()}`,
-      content,
-      timestamp: Date.now()
     };
-
-    const updatedPosts = posts.map(post => {
-      if (post.id === postId) {
-        const updatedComments = [...(post.comments || []), newComment];
-        return {
-          ...post,
-          comments: updatedComments,
-          commentCount: updatedComments.length
-        };
-      }
-      return post;
-    });
     
-    setPosts(updatedPosts);
-    saveToStorage(updatedPosts);
-  };
-
-  const sortPosts = (posts: Post[], sortType: 'new' | 'top' | 'trending') => {
-    switch (sortType) {
-      case 'new':
-        return [...posts].sort((a, b) => b.timestamp - a.timestamp);
-      case 'top':
-        return [...posts].sort((a, b) => b.votes - a.votes);
-      case 'trending':
-        // Simple trending algorithm: posts with good vote/time ratio
-        return [...posts].sort((a, b) => {
-          const aScore = a.votes / (Date.now() - a.timestamp + 1);
-          const bScore = b.votes / (Date.now() - b.timestamp + 1);
-          return bScore - aScore;
-        });
-      default:
-        return posts;
-    }
-  };
-
-  return {
-    posts,
-    isLoading,
-    addPost,
-    voteOnPost,
-    addComment,
-    sortPosts
-  };
+    return {
+        posts: data || [],
+        isLoading,
+        addPost: addPostMutation.mutate,
+        voteOnPost: voteOnPostMutation.mutate,
+        addComment: addCommentMutation.mutate,
+        sortPosts
+    };
 };

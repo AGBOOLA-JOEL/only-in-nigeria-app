@@ -1,10 +1,9 @@
-
 import { useParams, useNavigate } from "react-router-dom";
 import { usePosts } from "@/hooks/usePosts";
 import PostCard from "@/components/PostCard";
 import Header from "@/components/Header";
 import CommentModal from "@/components/CommentModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
@@ -13,24 +12,24 @@ const PostPage = () => {
   const { posts, isLoading, voteOnPost, addComment } = usePosts();
   const navigate = useNavigate();
   const [isCommentModalOpen, setIsCommentModalOpen] = useState(false);
-
+  
   const post = posts.find((p) => p.id === postId);
+  
+  const [currentPost, setCurrentPost] = useState(post);
+
+  useEffect(() => {
+    setCurrentPost(posts.find((p) => p.id === postId));
+  }, [posts, postId]);
 
   const handleVote = (postId: string, voteType: "up" | "down") => {
-    voteOnPost(postId, voteType);
+    voteOnPost({ postId, voteType });
   };
 
   const handleSubmitComment = (postId: string, content: string) => {
-    addComment(postId, content);
-    // Also update the currently viewed post in the modal
-    const updatedPost = posts.find(p => p.id === postId);
-    if(updatedPost) {
-        // This is a bit of a hack, because comment modal has its own state
-        // In a real app with a proper state manager, this would be smoother
-    }
+    addComment({ postId, content });
   };
 
-  if (isLoading) {
+  if (isLoading && !post) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-white px-4">
         <div className="text-center max-w-md">
@@ -46,7 +45,7 @@ const PostPage = () => {
     );
   }
 
-  if (!post) {
+  if (!post && !isLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Header />
@@ -67,6 +66,10 @@ const PostPage = () => {
     );
   }
 
+  if (!currentPost) {
+    return null; // Or a loading/not found state, though the above should catch it.
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50/20 to-gray-50">
       <Header />
@@ -80,7 +83,7 @@ const PostPage = () => {
           Back
         </Button>
         <PostCard
-          post={post}
+          post={currentPost}
           onVote={handleVote}
           onComment={() => setIsCommentModalOpen(true)}
           showComments={true}
@@ -90,7 +93,7 @@ const PostPage = () => {
       <CommentModal
         isOpen={isCommentModalOpen}
         onClose={() => setIsCommentModalOpen(false)}
-        post={post}
+        post={currentPost}
         onSubmitComment={handleSubmitComment}
       />
     </div>

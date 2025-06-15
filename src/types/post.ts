@@ -2,7 +2,8 @@
 export interface Comment {
   id: string;
   content: string;
-  timestamp: number;
+  created_at: string;
+  post_id: string;
 }
 
 export interface Post {
@@ -12,6 +13,6 @@ export interface Post {
   votes: number;
   userVote?: 'up' | 'down' | null;
   commentCount: number;
-  comments?: Comment[];
-  timestamp: number;
+  comments: Comment[];
+  created_at: string;
 }

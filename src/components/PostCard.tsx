@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { ChevronUp, ChevronDown, MessageCircle, Share2 } from "lucide-react";
@@ -14,8 +15,9 @@ interface PostCardProps {
 }
 
 const PostCard = ({ post, onVote, onComment, showComments = false, isLink = true }: PostCardProps) => {
-  const formatTimeAgo = (timestamp: number) => {
+  const formatTimeAgo = (timestampStr: string) => {
     const now = Date.now();
+    const timestamp = new Date(timestampStr).getTime();
     const diff = now - timestamp;
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -95,7 +97,7 @@ const PostCard = ({ post, onVote, onComment, showComments = false, isLink = true
             <span className="flex items-center gap-1 bg-green-50 text-green-700 px-2 py-1 rounded-full font-medium">
               🇳🇬 Nigeria
             </span>
-            <span className="whitespace-nowrap">{formatTimeAgo(post.timestamp)}</span>
+            <span className="whitespace-nowrap">{formatTimeAgo(post.created_at)}</span>
           </div>
 
           {/* Action Buttons */}
@@ -127,7 +129,7 @@ const PostCard = ({ post, onVote, onComment, showComments = false, isLink = true
               {post.comments.map((comment) => (
                 <div key={comment.id} className="bg-gray-50 p-3 rounded-lg border-l-2 border-green-200">
                   <p className="text-sm text-gray-700 break-words">{comment.content}</p>
-                  <p className="text-xs text-gray-500 mt-2">{formatTimeAgo(comment.timestamp)}</p>
+                  <p className="text-xs text-gray-500 mt-2">{formatTimeAgo(comment.created_at)}</p>
                 </div>
               ))}
             </div>

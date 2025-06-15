@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import PostCard from '@/components/PostCard';
 import CreatePostModal from '@/components/CreatePostModal';
@@ -16,12 +16,19 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeSort, setActiveSort] = useState<'new' | 'top' | 'trending'>('new');
 
+  useEffect(() => {
+    if (selectedPost) {
+      const updatedPost = posts.find(p => p.id === selectedPost.id);
+      setSelectedPost(updatedPost || null);
+    }
+  }, [posts, selectedPost]);
+
   const handleCreatePost = (title: string, content: string) => {
-    addPost(title, content);
+    addPost({ title, content });
   };
 
   const handleVote = (postId: string, voteType: 'up' | 'down') => {
-    voteOnPost(postId, voteType);
+    voteOnPost({ postId, voteType });
   };
 
   const handleComment = (postId: string) => {
@@ -33,7 +40,7 @@ const Index = () => {
   };
 
   const handleSubmitComment = (postId: string, content: string) => {
-    addComment(postId, content);
+    addComment({ postId, content });
   };
 
   // Filter and sort posts
@@ -44,7 +51,7 @@ const Index = () => {
   
   const sortedPosts = sortPosts(filteredPosts, activeSort);
 
-  if (isLoading) {
+  if (isLoading && posts.length === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-white px-4">
         <div className="text-center max-w-md">

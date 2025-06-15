@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -24,8 +23,9 @@ const CommentModal = ({ isOpen, onClose, post, onSubmitComment }: CommentModalPr
     }
   };
 
-  const formatTimeAgo = (timestamp: number) => {
+  const formatTimeAgo = (timestampStr: string) => {
     const now = Date.now();
+    const timestamp = new Date(timestampStr).getTime();
     const diff = now - timestamp;
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(diff / (1000 * 60 * 60));
@@ -64,7 +64,7 @@ const CommentModal = ({ isOpen, onClose, post, onSubmitComment }: CommentModalPr
               <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full font-medium">
                 🇳🇬 Nigeria
               </span>
-              <span>{formatTimeAgo(post.timestamp)}</span>
+              <span>{formatTimeAgo(post.created_at)}</span>
             </div>
           </div>
           
@@ -76,7 +76,7 @@ const CommentModal = ({ isOpen, onClose, post, onSubmitComment }: CommentModalPr
                   <p className="text-gray-700 text-sm sm:text-base break-words leading-relaxed">
                     {comment.content}
                   </p>
-                  <p className="text-xs text-gray-500 mt-2">{formatTimeAgo(comment.timestamp)}</p>
+                  <p className="text-xs text-gray-500 mt-2">{formatTimeAgo(comment.created_at)}</p>
                 </div>
               ))
             ) : (

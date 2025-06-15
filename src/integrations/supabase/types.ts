@@ -9,6 +9,59 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          post_id: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          post_id: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comments_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      posts: {
+        Row: {
+          content: string
+          created_at: string
+          id: string
+          title: string
+          votes: number
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: string
+          title: string
+          votes?: number
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: string
+          title?: string
+          votes?: number
+        }
+        Relationships: []
+      }
       transactions: {
         Row: {
           amount: number
@@ -38,7 +91,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_post_vote: {
+        Args: { post_id_to_update: string; vote_value: number }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
