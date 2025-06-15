@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
 import PostCard from '@/components/PostCard';
@@ -66,8 +67,8 @@ const Index = () => {
     <div className="min-h-screen bg-[#f7f7fa] flex flex-col">
       <Header onCreatePost={() => setIsCreateModalOpen(true)} />
       <main className="flex-1 flex flex-col items-start w-full">
-        {/* Align left edge of content with header text */}
-        <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:px-6">
+        {/* Align left edge of content with header text, add a bit more left padding on desktop */}
+        <div className="w-full max-w-7xl mx-auto px-3 sm:px-4 lg:pl-8 lg:pr-6">
           {/* Center/narrow main content column; aligns left edge with header text */}
           <div className="w-full lg:max-w-2xl">
             {/* Welcome Section */}
