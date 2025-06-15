@@ -80,7 +80,8 @@ const Index = () => {
       <Header onCreatePost={() => setIsCreateModalOpen(true)} />
       <main className="flex-1 flex flex-col items-start w-full">
         {/* Wider content container for desktop */}
-        <div className="w-full max-w-[96rem] mx-auto px-2 sm:px-4 lg:pl-24 lg:pr-8">
+        <div className="w-full max-w-[96rem] mx-auto px-2 sm:px-4 lg:pl-24 lg:pr-8 lg:ml-16">
+          {/* lg:ml-16 added above - aligns with header/logo left margin */}
           <div className="w-full lg:max-w-4xl">
             {/* Welcome Section with margin top added */}
             <div className="mb-6 sm:mb-8 p-5 sm:p-8 border border-green-200 bg-green-50/80 rounded-xl shadow-md mt-3 sm:mt-6">
