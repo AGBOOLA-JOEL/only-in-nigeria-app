@@ -65,18 +65,13 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-[#f7f7fa] flex flex-col">
       <Header onCreatePost={() => setIsCreateModalOpen(true)} />
-      <main
-        className="flex-1 flex flex-col items-center justify-start w-full px-2 py-4 sm:px-0"
-      >
+      <main className="flex-1 flex flex-col items-center justify-start w-full px-2 py-4 sm:px-0">
         <div
           className="
             w-full
             max-w-2xl
             mx-auto
-            px-2
-            sm:px-0
-            lg:mx-0
-            lg:ml-[104px]  /* Move to the right on large screens */
+            px-3 sm:px-4 lg:px-6
           "
         >
           {/* Welcome Section */}
