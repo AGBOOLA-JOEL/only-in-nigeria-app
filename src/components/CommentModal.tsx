@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -45,7 +44,7 @@ const CommentModal = ({ isOpen, onClose, post, onSubmitComment }: CommentModalPr
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-[95vw] sm:max-w-4xl m-0 p-2 sm:p-6">
+      <DialogContent className="max-w-4xl mx-auto m-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-4">
           <DialogTitle className="text-green-600 flex items-center gap-2">
             💬 Comments

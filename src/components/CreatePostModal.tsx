@@ -29,7 +29,7 @@ const CreatePostModal = ({ isOpen, onClose, onSubmit }: CreatePostModalProps) =>
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="w-full max-w-[95vw] sm:max-w-2xl m-0 p-2 sm:p-6">
+      <DialogContent className="max-w-2xl mx-auto m-4 max-h-[90vh] overflow-y-auto">
         <DialogHeader className="pb-4">
           <DialogTitle className="text-green-600 text-lg sm:text-xl flex items-center gap-2">
             🇳🇬 Share your Nigeria story
