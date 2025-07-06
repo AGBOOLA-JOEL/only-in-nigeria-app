@@ -11,84 +11,350 @@ export type Database = {
     Tables: {
       comments: {
         Row: {
+          author_name: string | null
           content: string
-          created_at: string
+          created_at: string | null
           id: string
-          post_id: string
+          parent_id: string | null
+          story_id: string | null
         }
         Insert: {
+          author_name?: string | null
           content: string
-          created_at?: string
+          created_at?: string | null
           id?: string
-          post_id: string
+          parent_id?: string | null
+          story_id?: string | null
         }
         Update: {
+          author_name?: string | null
           content?: string
-          created_at?: string
+          created_at?: string | null
           id?: string
-          post_id?: string
+          parent_id?: string | null
+          story_id?: string | null
         }
         Relationships: [
           {
-            foreignKeyName: "comments_post_id_fkey"
-            columns: ["post_id"]
+            foreignKeyName: "comments_parent_id_fkey"
+            columns: ["parent_id"]
             isOneToOne: false
-            referencedRelation: "posts"
+            referencedRelation: "comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "comments_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
             referencedColumns: ["id"]
           },
         ]
       }
-      posts: {
+      email_subscriptions: {
         Row: {
-          content: string
-          created_at: string
-          downvotes: number
+          created_at: string | null
+          email: string
           id: string
-          name: string | null
-          title: string
-          votes: number
+          is_active: boolean | null
+          story_id: string | null
+          subscription_type: string | null
+          updated_at: string | null
         }
         Insert: {
-          content: string
-          created_at?: string
-          downvotes?: number
+          created_at?: string | null
+          email: string
           id?: string
-          name?: string | null
-          title: string
-          votes?: number
+          is_active?: boolean | null
+          story_id?: string | null
+          subscription_type?: string | null
+          updated_at?: string | null
         }
         Update: {
-          content?: string
-          created_at?: string
-          downvotes?: number
+          created_at?: string | null
+          email?: string
           id?: string
-          name?: string | null
-          title?: string
-          votes?: number
+          is_active?: boolean | null
+          story_id?: string | null
+          subscription_type?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_subscriptions_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      flagged_stories: {
+        Row: {
+          created_at: string | null
+          details: string | null
+          id: string
+          reason: string | null
+          story_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          details?: string | null
+          id?: string
+          reason?: string | null
+          story_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          details?: string | null
+          id?: string
+          reason?: string | null
+          story_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "flagged_stories_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flagged_stories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      newsletter_subscriptions: {
+        Row: {
+          created_at: string | null
+          email: string
+          id: string
+          is_active: boolean | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email: string
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string
+          id?: string
+          is_active?: boolean | null
+          updated_at?: string | null
         }
         Relationships: []
       }
-      transactions: {
+      profiles: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          phone: string
+          role: string
+          total_savings: number | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          phone: string
+          role?: string
+          total_savings?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          phone?: string
+          role?: string
+          total_savings?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      saved_stories: {
+        Row: {
+          created_at: string | null
+          id: string
+          story_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          story_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          story_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "saved_stories_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "saved_stories_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      savings_transactions: {
         Row: {
           amount: number
-          category: string
-          created_at: string
-          description: string
+          created_at: string | null
+          date: string
+          description: string | null
           id: string
+          logged_by: string | null
+          status: string
+          updated_at: string | null
+          user_id: string | null
         }
         Insert: {
           amount: number
-          category: string
-          created_at?: string
-          description: string
+          created_at?: string | null
+          date: string
+          description?: string | null
           id?: string
+          logged_by?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
           amount?: number
-          category?: string
-          created_at?: string
-          description?: string
+          created_at?: string | null
+          date?: string
+          description?: string | null
           id?: string
+          logged_by?: string | null
+          status?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      stories: {
+        Row: {
+          author_name: string | null
+          content: string
+          created_at: string | null
+          id: string
+          status: string | null
+          title: string
+          updated_at: string | null
+          upvotes: number | null
+        }
+        Insert: {
+          author_name?: string | null
+          content: string
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          title: string
+          updated_at?: string | null
+          upvotes?: number | null
+        }
+        Update: {
+          author_name?: string | null
+          content?: string
+          created_at?: string | null
+          id?: string
+          status?: string | null
+          title?: string
+          updated_at?: string | null
+          upvotes?: number | null
+        }
+        Relationships: []
+      }
+      story_upvotes: {
+        Row: {
+          created_at: string | null
+          id: string
+          story_id: string | null
+          user_name: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          story_id?: string | null
+          user_name?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          story_id?: string | null
+          user_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_upvotes_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      users: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          email: string
+          id: string
+          is_admin: boolean | null
+          name: string | null
+          provider: string | null
+          provider_id: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email: string
+          id?: string
+          is_admin?: boolean | null
+          name?: string | null
+          provider?: string | null
+          provider_id?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          email?: string
+          id?: string
+          is_admin?: boolean | null
+          name?: string | null
+          provider?: string | null
+          provider_id?: string | null
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -97,9 +363,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      update_post_vote: {
-        Args: { post_id_to_update: string; vote_value: number }
-        Returns: undefined
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
     }
     Enums: {
