@@ -35,26 +35,26 @@ export const usePosts = () => {
     const { data, isLoading } = useQuery({
         queryKey: ['posts'],
         queryFn: async (): Promise<Post[]> => {
-            // Fetch posts and comments in parallel
-            const postsPromise = supabase.from('posts').select('*').order('created_at', { ascending: false });
+            // Fetch stories and comments in parallel
+            const storiesPromise = supabase.from('stories').select('*').order('created_at', { ascending: false });
             const commentsPromise = supabase.from('comments').select('*');
             
-            const [postsRes, commentsRes] = await Promise.all([postsPromise, commentsPromise]);
+            const [storiesRes, commentsRes] = await Promise.all([storiesPromise, commentsPromise]);
             
-            if (postsRes.error) throw new Error(postsRes.error.message);
+            if (storiesRes.error) throw new Error(storiesRes.error.message);
             if (commentsRes.error) throw new Error(commentsRes.error.message);
 
-            const postsData = postsRes.data || [];
+            const storiesData = storiesRes.data || [];
             const commentsData = commentsRes.data || [];
             const votedPosts = getVotedPosts();
 
-            // Group comments by post_id
-            const commentsByPostId = commentsData.reduce<Record<string, Comment[]>>((acc, comment) => {
+            // Group comments by story_id
+            const commentsByStoryId = commentsData.reduce<Record<string, Comment[]>>((acc, comment) => {
                 const typedComment: Comment = {
                     id: comment.id,
                     content: comment.content,
                     created_at: comment.created_at,
-                    post_id: comment.post_id,
+                    post_id: comment.story_id,
                 };
                 if (!acc[typedComment.post_id]) {
                     acc[typedComment.post_id] = [];
@@ -63,16 +63,19 @@ export const usePosts = () => {
                 return acc;
             }, {});
 
-            // Combine posts with their comments and vote status, NO DOWNVOTES
-            const posts: Post[] = postsData.map(p => {
-                const postComments = commentsByPostId[p.id] || [];
+            // Combine stories with their comments and vote status, NO DOWNVOTES
+            const posts: Post[] = storiesData.map(story => {
+                const postComments = commentsByStoryId[story.id] || [];
                 return {
-                    ...p,
-                    votes: typeof p.votes === "number" ? p.votes : 0,
-                    name: p.name ?? null,
+                    id: story.id,
+                    title: story.title,
+                    content: story.content,
+                    created_at: story.created_at,
+                    votes: typeof story.upvotes === "number" ? story.upvotes : 0,
+                    name: story.author_name ?? null,
                     comments: postComments.sort((a,b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()),
                     commentCount: postComments.length,
-                    userVote: votedPosts[p.id] === "up" ? "up" : null, // Only "up" or null
+                    userVote: votedPosts[story.id] === "up" ? "up" : null, // Only "up" or null
                 };
             });
             
@@ -87,17 +90,17 @@ export const usePosts = () => {
             const insertObj: {
                 title: string;
                 content: string;
-                votes?: number;
-                name?: string | null;
+                upvotes?: number;
+                author_name?: string | null;
             } = {
                 title,
                 content,
-                votes: 1,
-                name: typeof name === "string" && name.trim() !== "" ? name : null,
+                upvotes: 1,
+                author_name: typeof name === "string" && name.trim() !== "" ? name : null,
             };
 
             const { data, error } = await supabase
-                .from('posts')
+                .from('stories')
                 .insert(insertObj)
                 .select()
                 .single();
